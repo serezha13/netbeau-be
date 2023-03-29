@@ -2,6 +2,8 @@
 
 This is a express js server. It contains 7 requests, 6 for Node task and 1 for Front task.
 
+You can run it by: node index.js
+
 1. Create user
 http://localhost:5000/user, JSON body: { first_name: string, last_name: string, age: number}
 
