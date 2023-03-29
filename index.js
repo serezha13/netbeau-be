@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
+import cors from 'cors'
 import User from './schema/user.schema.js';
 import { searchList } from './utils/search.js';
 
@@ -11,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 mongoose.connect('mongodb+srv://netbeau:netbeauPass@netbeau.jj4alvo.mongodb.net/test')
     .then(() => console.log('Connected to mongo.'))
@@ -112,9 +114,15 @@ app.delete('/user/:id', async (req, res) => {
 });
 
 app.get('/search', async (req, res) => {
-    res.json(searchList)
-})
-
+    try {
+        const query = req.query.query?.toLowerCase() ?? ''
+        const results = query === '' ? searchList : searchList.filter(item => item.toLowerCase().includes(query));
+        res.json(results);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
